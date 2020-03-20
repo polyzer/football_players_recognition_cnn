@@ -1,10 +1,13 @@
 import telebot
 import tensorflow as tf
+from tensorflow.keras.models import load_model
+import keras
 import cv2
 import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+import skimage.transform
 import re
 import json
 import decorator
@@ -23,7 +26,7 @@ def errLog(func, *args, **kwargs):
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
-    bot.send_message(message.chat.id, 'Привет, ты написал мне /start')
+    bot.send_message(message.chat.id, 'Привет, ты написал мне /start А теперь пришли мне boxid футболиста, а я попробую угадать его label.')
 
 @errLog
 def processPhotoMessage(message):
@@ -38,12 +41,17 @@ def processPhotoMessage(message):
     with open("image.png", 'wb') as new_file:
         new_file.write(downloaded_file)
     img = cv2.imread("image.png")
-    plt.imshow(img)
-    plt.show()
-
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img = skimage.transform.resize(img, (83, 45))
+    img = img.reshape(1, img.shape[0], img.shape[1], img.shape[2])
+    label = model.predict_classes(img)[0]
+    bot.send_message(message.chat.id, str(label))
+    print(f"Label {label} was sended!")
+    
 @bot.message_handler(content_types=['photo'])
 def photo(message):
     processPhotoMessage(message)
 
+model = load_model("model_100.h5")
 print("it's started")
 bot.polling()
