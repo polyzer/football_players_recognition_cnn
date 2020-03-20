@@ -3,16 +3,14 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 import keras
 import cv2
-import pandas as pd
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
 import skimage.transform
 import re
 import json
 import decorator
 
-bot = telebot.TeleBot('1045675720:AAGV3UhR4Ks4mkV-x1ZTfjF8et0Iudp3hbk')
+api_key = "1045675720:AAGV3UhR4Ks4mkV-x1ZTfjF8et0Iudp3hbk"
+
+bot = telebot.TeleBot(api_key)
 
 @decorator.decorator
 def errLog(func, *args, **kwargs):
